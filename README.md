@@ -4,7 +4,6 @@ Opis działania skryptów testowych:
 2) user
 3) cache
 4) cpuusage
-!ABY SKRYPTY URUCHAMIAŁY SIĘ POPRAWNIE NALEŻY ZAPISAĆ JE NA DYSKU BEZ ROZSZERZENIA .TXT!
 
 1) test
 Skrypt służy do przeprowadzania pomiarów w wybranych scenariuszach.
