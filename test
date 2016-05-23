@@ -1,0 +1,73 @@
+#!/bin/bash
+
+min=1200000 		#min freq Hz
+max=1200000		#maks freq Hz
+cpus=8 			#liczba rdzeni logicznych cpu
+time=120 		#w sekundach
+name1="min_" 		#identyfikacja czestotliwosci
+e1=".csv" 		#rozszerzenie intela
+name2="stress_" 	#nazwa scenariusza
+e2=".txt" 		#rozszerzenie powerstata
+name3="times" 		#koncowka nazwy pliku z czasami uruchomienia aplikacji z trybu user
+i=0 			#iterator
+x=10			#ilosc powtorzen
+
+
+#wyłączenie nmi_watchdog
+echo 0 > /proc/sys/kernel/nmi_watchdog
+
+
+#ustawienie czestotliwosci cpu
+
+for((j=0;j<$cpus;j++));do 
+	sudo cpufreq-set -c $j -g userspace
+	sudo echo $min >  /sys/devices/system/cpu/cpu$j/cpufreq/scaling_min_freq
+	sudo echo $max >  /sys/devices/system/cpu/cpu$j/cpufreq/scaling_max_freq
+	sudo cpufreq-set -c $j -f 1200000
+done
+
+#petla przeprowadzajaca testy
+for (( i=0; $i < $x; i++ )) ; do
+
+
+#czyszczenie cache
+	./cache
+
+#user_start
+	#./user
+
+	
+#start intel pcm.x
+	modprobe msr
+	#text
+	#./pcm.x 1 -i=$time -csv > $name1$name2$i$e1
+	
+	#user
+	#./pcm.x 1 -i=$time -csv > $name1$name2$i$e1 & ./cpuusage intel_ $i
+	
+	#stress
+	./pcm.x 1 -i=$time -csv > $name1$name2$i$e1 & stress -c 8 -t $time
+
+#start powerstat
+	#text
+	#powerstat -DR 1 $time >> $name1$name2$i$e2
+	
+	#user
+	#powerstat -DR 1 $time >> $name1$name2$i$e2 & ./cpuusage power_ $i
+
+	#stress
+	powerstat -DR 1 $time >> $name1$name2$i$e2 & stress -c 8 -t $time
+#procedury koncowe
+	chmod 777 $name1$name2$i$e1
+	chmod 777 $name1$name2$i$e2
+	
+#user_koniec
+	#pkill xargs
+	#pkill firefox
+	#pkill soffice
+	#chmod 777 $name1$name2$name3$e2
+done
+
+#przywrocenie dynamicznego skalowania czestotliwoscia cpu
+sudo cpufreq-set -g ondemand
+exit 0

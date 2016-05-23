@@ -1,0 +1,27 @@
+#!/bin/bash
+time=120
+pid1=$(pgrep firefox)
+pid2=$(pgrep soffice)
+name1="firefox_"
+name2="office_"
+ext=".csv"
+
+#tworzenie odpowiednich plikow
+touch $name1$1$2$ext
+touch $name2$1$2$ext
+
+#zapis nagłówków danych do plików
+echo mem cpu time >> $name1$1$2$ext
+echo mem cpu time >> $name2$1$2$ext
+
+#pomiary
+for (( i=0; $i < $time; i++ )) ; do
+ps --no-headers -o pmem,pcpu -p $pid1 | awk -v time="$(date +"%r")" '{print $1, $2, time}' >> $name1$1$2$ext
+ps --no-headers -o pmem,pcpu -p $pid2 | awk -v time="$(date +"%r")" '{print $1, $2, time}' >> $name2$1$2$ext
+sleep 1
+done
+
+#procedury końcowe
+chmod 777 $name1$1$2$ext
+chmod 777 $name2$1$2$ext
+exit 0

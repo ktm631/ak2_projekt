@@ -1,0 +1,17 @@
+#!/bin/bash
+
+name1="max_" #identyfikacja czestotliwosci
+e1=".csv" #rozszerzenie intela
+name2="user_" #nazwa scenariusza
+e2=".txt" #rozszerzenie powerstata
+name3="times" 
+start=`date +%N`
+
+
+#uruchomienie firefoxa i aplikacji pakieru libreoffice
+xargs -a url firefox -new-tab "$line" & libreoffice --norestore --calc &libreoffice --norestore --writer & libreoffice --norestore --impress
+end=`date +%N`
+#zapis wynikow do pliku
+
+echo `expr $end - $start` >> $name1$name2$name3$e2 
+exit 0
